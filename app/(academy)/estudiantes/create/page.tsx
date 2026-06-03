@@ -93,7 +93,7 @@ export default async function CrearEstudiantePage() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 transition p-3 rounded font-semibold"
+          className="w-full bg-blue-500 hover:bg-blue-600 transition p-3 rounded font-semibold"
         >
           Crear Estudiante
         </button>
