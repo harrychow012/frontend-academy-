@@ -1,5 +1,5 @@
-import { Sexo } from "./sexo.interface";
-import { Etnia } from "./etnias.interface";
+import { Etnia } from "../etnias.interface";
+import { Sexo } from "../sexo.interface";
 
 export interface Estudiante {
   id: number;
