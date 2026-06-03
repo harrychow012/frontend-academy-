@@ -19,7 +19,6 @@ export default async function CrearEstudiantePage() {
     });
 
     redirect("/estudiantes");
-    console.log("Estudiante creado");
   }
 
   return (
