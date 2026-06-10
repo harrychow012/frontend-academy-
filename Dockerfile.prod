@@ -1,30 +1,44 @@
-# 1. Dependencies
-FROM node:20-alpine AS deps
-WORKDIR /app
+# 1. Dependencias
 
-COPY package.json package-lock.json ./
-RUN npm install
+FROM --platform=linux/amd64 node:20-alpine AS deps
 
-# 2. Build
-FROM node:20-alpine AS builder
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm install --frozen-lockfile
+
+# 2. Build - Construir
+
+FROM --platform=linux/amd64 node:20-alpine AS build
+
+WORKDIR /usr/src/app
+
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
 COPY . .
+
+ARG GATEWAY_URL
+ENV GATEWAY_URL=${GATEWAY_URL}
 
 RUN npm run build
 
-# 3. Production
-FROM node:20-alpine AS runner
-WORKDIR /app
+# 3. Prod
+
+FROM --platform=linux/amd64 node:20-alpine AS prod
+
+WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copiar archivos necesarios para next start
+COPY --from=build /usr/src/app/public ./public
+COPY --from=build /usr/src/app/.next ./.next
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/package.json ./package.json
 
-EXPOSE 8080
+EXPOSE 3004
 
 CMD ["npm", "run", "start"]
