@@ -1,92 +1,114 @@
-import { deleteStudent, getAllStudents } from "@/actions";
-import Link from "next/link";
+import { deleteStudent, getAllStudents } from '@/actions'
+import Link from 'next/link'
 
 export default async function ObtenerEstudiantes() {
-  const estudiantes = await getAllStudents();
+  const estudiantes = await getAllStudents()
 
   return (
-    <div className="p-8 bg-darkmin-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-white">
-            Gestión de Estudiantes
-          </h1>
-          <p className="text-white text-sm">
-            Lista de estudiantes registrados en el sistema
-          </p>
+    <div className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-7xl mx-auto'>
+        <div className='flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8'>
+          <div>
+            <h1 className='text-4xl font-bold'>Gestión de Estudiantes</h1>
+
+            <p className='text-gray-400 mt-1'>
+              {estudiantes.length} estudiantes registrados
+            </p>
+          </div>
+
+          <div className='flex gap-3'>
+            <Link
+              href='/'
+              className='px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition'
+            >
+              Regresar
+            </Link>
+
+            <Link
+              href='/estudiantes/create'
+              className='px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium'
+            >
+              Nuevo Estudiante
+            </Link>
+          </div>
         </div>
 
-        <div className="flex gap-3">
-          <Link
-            href="/"
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded transition"
-          >
-            ← Regresar
-          </Link>
+        <div className='bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-xl'>
+          <div className='overflow-x-auto'>
+            <table className='w-full'>
+              <thead>
+                <tr className='bg-gray-800 border-b border-gray-700 text-lg'>
+                  <th className='p-4 text-left'>Nombre</th>
+                  <th className='p-4 text-left'>Paterno</th>
+                  <th className='p-4 text-left'>Materno</th>
+                  <th className='p-4 text-left'>Dirección</th>
+                  <th className='p-4 text-left'>Etnia</th>
+                  <th className='p-4 text-left'>Sexo</th>
+                  <th className='p-4 text-center'>Acciones</th>
+                </tr>
+              </thead>
 
-          <Link
-            href="/estudiantes/create"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
-          >
-            + Crear Estudiante
-          </Link>
+              <tbody>
+                {estudiantes.map((est) => (
+                  <tr
+                    key={est.id}
+                    className='border-b border-gray-700 hover:bg-gray-800/50 transition'
+                  >
+                    <td className='p-4 font-bold'>{est.nombre}</td>
+
+                    <td className='p-4 font-bold'>{est.paterno}</td>
+
+                    <td className='p-4 font-bold'>{est.materno}</td>
+
+                    <td className='p-4 font-bold'>{est.direccion}</td>
+
+                    <td className='p-4'>
+                      <span className=' text-base font-bold'>
+                        {est.etnia?.nombre}
+                      </span>
+                    </td>
+
+                    <td className='p-4'>
+                      <span className=' text-base font-bold'>
+                        {est.sexo?.nombre}
+                      </span>
+                    </td>
+
+                    <td className='p-4'>
+                      <div className='flex justify-center gap-6'>
+                        <Link
+                          href={`/estudiantes/${est.id}`}
+                          className='bg-slate-600 hover:bg-slate-700 px-3 py-1 rounded-md text-base font-bold'
+                        >
+                          Ver
+                        </Link>
+
+                        <Link
+                          href={`/estudiantes/edit/${est.id}`}
+                          className='bg-green-600 hover:bg-green-700 px-3 py-1 rounded-md text-base font-bold'
+                        >
+                          Editar
+                        </Link>
+
+                        <form action={deleteStudent}>
+                          <input type='hidden' name='id' value={est.id} />
+
+                          <button
+                            type='submit'
+                            className='bg-red-700 hover:bg-red-900 px-3 py-1 rounded-md text-base font-bold'
+                          >
+                            Eliminar
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-
-      <div className="bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-700 text-white  uppercase">
-            <tr>
-              <th className="p-3 text-left">Nombre</th>
-              <th className="p-3 text-left">Paterno</th>
-              <th className="p-3 text-left">Materno</th>
-              <th className="p-3 text-left">Dirección</th>
-              <th className="p-3 text-left">Etnia</th>
-              <th className="p-3 text-left">Sexo</th>
-              <th className="p-3 text-left">Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {estudiantes.map((est) => (
-              <tr key={est.id} className="border-t">
-                <td className="p-3">{est.nombre}</td>
-                <td className="p-3">{est.paterno}</td>
-                <td className="p-3">{est.materno}</td>
-                <td className="p-3">{est.direccion}</td>
-                <td className="p-3">{est.etnia?.nombre}</td>
-                <td className="p-3">{est.sexo?.nombre}</td>
-
-                <td className="p-3 flex gap-2">
-                  <Link
-                    href={`/estudiantes/${est.id}`}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
-                  >
-                    Ver
-                  </Link>
-
-                  <Link
-                    href={`/estudiantes/edit/${est.id}`}
-                    className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
-                  >
-                    Editar
-                  </Link>
-
-                  <form action={deleteStudent}>
-                    <input type="hidden" name="id" value={est.id} />
-                    <button
-                      type="submit"
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                    >
-                      Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
-  );
+  )
 }
